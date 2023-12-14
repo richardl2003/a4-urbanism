@@ -1,0 +1,86 @@
+@startuml
+
+title Island: Visualizer
+
+package Visualizer {
+
+  interface Visualizer {
+    ~process(Island): void
+  }
+  abstract class Heatmap {
+    -{static}{final} colors: Map<String, Color>
+    +^process(Island): void
+    #getTileColor(Tile): Color
+    -traverseTiles(List<Tile>): void
+    -traverseBorders(List<Border>): void
+    -traverseVertexDecorators(List<VertexDecorators>)
+  }
+  class AltitudeVisualizer {
+    #^getTileColor(Tile): Color
+  }
+  class BiomeVisualizer {
+    -{static}{final} colors: Map<String, Color>
+    +process(Island): void
+    #getTileColor(Tile): Color
+    -traverseTiles(List<Tile>): void
+    -traverseBorders(List<Border>): void
+    -traverseVertexDecorators(List<VertexDecorators>)
+  }
+  class DebugVisualizer {
+    -{static}{final} colors: Map<String, Color>
+    +process(Island): void
+    #getTileColor(Tile): Color
+    -traverseTiles(List<Tile>): void
+    -traverseBorders(List<Border>): void
+    -traverseVertexDecorators(List<VertexDecorators>)
+  }
+  class LagoonVisualizer {
+    -{static}{final} colors: Map<String, Color>
+    +process(Island): void
+    #getTileColor(Tile): Color
+    -traverseTiles(List<Tile>): void
+    -traverseBorders(List<Border>): void
+    -traverseVertexDecorators(List<VertexDecorators>)
+  }
+  class MoistureVisualizer {
+    -{static}{final} colors: Map<String, Color>
+    +process(Island): void
+    #getTileColor(Tile): Color
+    -traverseTiles(List<Tile>): void
+    -traverseBorders(List<Border>): void
+    -traverseVertexDecorators(List<VertexDecorators>)
+  }
+
+}
+
+package Island {
+
+  class Island
+
+}
+
+package Geography {
+
+  class Border
+  class Tile
+  class VertexDecorator
+
+}
+
+AltitudeVisualizer --|> Visualizer.Heatmap
+
+BiomeVisualizer ..|> Visualizer.Visualizer
+
+DebugVisualizer ..|> Visualizer.Visualizer
+
+Heatmap ..|> Visualizer.Visualizer
+Heatmap .down.> Island
+Heatmap .up.> Geography
+
+LagoonVisualizer ..|> Visualizer.Visualizer
+
+MoistureVisualizer --|> Visualizer.Heatmap
+
+Visualizer .up.> Island.Island
+
+@enduml

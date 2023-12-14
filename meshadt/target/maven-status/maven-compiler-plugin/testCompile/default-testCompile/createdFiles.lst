@@ -1,0 +1,8 @@
+Geometries/SegmentTest.class
+Geometries/CoordinateTest.class
+Geometries/PropertyHandlerTest.class
+Geometries/PolygonTest.class
+EnhancedSets/SegmentSetTest.class
+EnhancedSets/VertexSetTest.class
+Geometries/VertexTest.class
+EnhancedSets/PolygonSetTest.class

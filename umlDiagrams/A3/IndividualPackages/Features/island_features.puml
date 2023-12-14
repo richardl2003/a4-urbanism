@@ -1,0 +1,176 @@
+@startuml
+
+title Island: Features
+
+package Features {
+
+  package Biomes {
+
+    class AmericaProfile {}
+    class AsiaProfile {}
+    enum Biome {
+      DESERT
+      TUNDRA
+      GRASSLAND
+      MIXEDFOREST
+      MONTANEFOREST
+      SAVANNA
+      RAINFOREST
+      ALPINETUNDRA
+      MOUNTAIN
+      MANGROVE
+      -{final} color: Color
+      +Biome(Color)
+      +toColor(): Color
+    }
+    interface DiagramProfile {
+      process(Island): void
+    }
+    abstract class WhittakerUtil {
+      ~island: Island
+      #boundaries: Map<Biome, Map<String, Double>>
+      +process(Island): void
+      ~{abstract} setBiomeBoundaries(): void
+      -setAllBiomes(): void
+      -checkForBiome(Tile): Biome
+      #setBiomeProperty(Double, Double, Double, Double): Map<String, Double>
+    }
+
+  }
+  package Elevation {
+
+    class CraterProfile
+    interface ElevationProfile {
+      ~process(Island): void
+    }
+    abstract class ElevationUtil {
+      ~center: Coordinate
+      ~island: Island
+      +{static} maxAltitude: Double
+      +{static} minAltitude: Double
+      ~{abstract} calculateAltitude(VertexDecorator): Double
+      +process(Island): void
+      -setAllAltitudes(): void
+      #getDistance(Coordinate, Coordinate): double
+    }
+    class MountainProfile {}
+    class PrairieProfile {}
+
+  }
+  package Shapes {
+
+    interface Shape {
+      ~process(Island): void
+    }
+    abstract class ShapeGenerator {
+      ~island: Island
+      #{abstract}initializeLand(): void
+      #{abstract}intersects(Polygon): boolean
+      +process(Island): void
+      #determineMeshCentre(): Coordinate
+    }
+    class Circle {}
+    class Oval {}
+    class Square {}
+    class ThreeCircle {}
+    class Triangle {}
+
+  }
+  package Soil {
+
+    interface SoilProfile {
+      ~process(Island): void
+    }
+    abstract class SoilUtil {
+      ~island: Island
+      -maxAbsorption: Double
+      -minAbsorption: Double
+      +process(Island): void
+      +{abstract} getSoilProfile(): SoilProfile
+      #{abstract} calcLandWaterAbsorption(Tile, double): double
+      #{abstract} calcRiverAbsorption(Tile, double): double
+    }
+    class DryProfile {}
+    class WetProfile {}
+
+  }
+  package Water {
+
+    interface BodyOfWater {
+      ~multiplicity(): Integer
+      ~isAboveGround(): boolean
+      ~moisture(): Integer
+      ~isLake(): boolean
+      ~isRiver(): boolean
+      ~isAquifer(): boolean
+      ~isOcean(): boolean
+    }
+    interface WaterGenerator {
+      ~process(Island, Integer): void
+    }
+    abstract class LandWaterGenerator {
+      ~island: Island
+      ~uncheckedTiles: List<Tile>
+      +process(Island, Integer): void
+      #{abstract} getLayer(): Integer
+      +generateWater(Integer): boolean
+      #{abstract} canBeAdjacentWater(): boolean
+      -containsWater(List<Tile>): boolean
+    }
+    class LakeGenerator
+    class RiverGenerator
+    class AquiferGenerator
+    class Ocean
+    class River
+    class Lake
+    class Aquifer
+
+  }
+}
+
+DiagramProfile .up.> Island.Island
+WhittakerUtil .up.|> DiagramProfile
+WhittakerUtil .down.> Geography.Tile
+WhittakerUtil *-up- Island.Island
+AmericaProfile .up.|> WhittakerUtil
+AsiaProfile .up.|> WhittakerUtil
+WhittakerUtil *-- Biome
+
+ElevationProfile .up.> Island.Island
+ElevationUtil *-up- Island.Island
+ElevationUtil .right.|> ElevationProfile
+ElevationUtil .down.> Geography.Tile
+ElevationUtil .down.> Geography.VertexDecorator
+CraterProfile -up-|> ElevationUtil
+MountainProfile -up-|> ElevationUtil
+PrairieProfile -up-|> ElevationUtil
+
+Features.Shapes.Shape .up.> Island.Island
+Features.Shapes.ShapeGenerator .up.|> Features.Shapes.Shape
+Features.Shapes.Circle -up-|> Features.Shapes.ShapeGenerator
+Features.Shapes.ThreeCircle -up-|> Features.Shapes.ShapeGenerator
+Features.Shapes.Square -up-|> Features.Shapes.ShapeGenerator
+Features.Shapes.Triangle -up-|> Features.Shapes.ShapeGenerator
+Features.Shapes.Oval -up-|> Features.Shapes.ShapeGenerator
+
+SoilProfile .up.> Island.Island
+SoilUtil .up.|> SoilProfile
+SoilUtil .down.> Geography.Tile
+DryProfile -up-|> SoilUtil
+WetProfile -up-|> SoilUtil
+
+WaterGenerator .up.> Island.Island
+Features.Water.Water .up.|> BodyOfWater
+LandWaterGenerator .up.|> WaterGenerator
+LakeGenerator .up.|> LandWaterGenerator
+LakeGenerator ..> Lake
+RiverGenerator .up.|> WaterGenerator
+RiverGenerator *-- River
+RiverGenerator .down.> Geography
+AquiferGenerator .up.|> LandWaterGenerator
+Ocean -up-|> Features.Water.Water
+River -up-|> Features.Water.Water
+Lake -up-|> Features.Water.Water
+Aquifer -up-|> Features.Water.Water
+
+@enduml

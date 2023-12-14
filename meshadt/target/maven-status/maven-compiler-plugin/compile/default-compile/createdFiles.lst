@@ -1,0 +1,17 @@
+Helpers/JTSToGeneratorConverter.class
+Geometries/PropertyHandler.class
+Geometries/Centroid.class
+Helpers/ADTToStructsConverter.class
+Geometries/Segment.class
+EnhancedSets/SegmentSet.class
+Geometries/Polygon.class
+Geometries/Coordinate.class
+EnhancedSets/GeometrySet.class
+EnhancedSets/VertexSet.class
+EnhancedSets/PolygonSet.class
+Helpers/ADTToStructsConverterNew.class
+Mesh/Mesh.class
+Helpers/VoronoiDiagram.class
+Mesh/GeometryDiagram.class
+Geometries/Vertex.class
+Helpers/NeighbourCalculator.class

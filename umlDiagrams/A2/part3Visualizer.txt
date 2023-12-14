@@ -1,0 +1,70 @@
+@startuml
+
+skin rose
+
+title Visualizer - Class Diagram
+
+class Main {
+  +{static} main(String[]): void
+  -{static} setupCLI(): Options
+  -parseArgs(String[], Options): Map<String, String>
+}
+
+abstract class VisualMode {
+  #render(Structs.Mesh.Mesh, Graphics2D): void
+  #visualizeVertices(Structs.Mesh.Mesh, Graphics2D):void
+  #{abstract}isDebug(): void
+  #visualizeSegment(Structs.Mesh.Mesh, Graphics2D, List<Structs.Vertex>): void
+  #visualizePolygons(Structs.Mesh.Mesh, Graphics2D, List<Structs.Vertex>, List<Structs.Segment>): void
+  #updateCoordsForPolygons(Lis<Structs.Vertex>, List<Structs.Segment>, List<Integer> , int[], int[]): void
+  #extractColor(List<Structs.Property>): Color
+  #isCentroid(List<Structs.Property>): boolean
+  #extractThickness(List<Structs.Property>): Float
+}
+
+class SVGCanvas {
+  +{static} build(int, int): Graphics2D
+  +{static} write(Graphics2D, String): void
+}
+
+class NormalMode {
+  #render(Structs.Mesh.Mesh, Graphics2D): void
+  #isDebug(): boolean
+}
+
+class MeshDump {
+  +dump(Structs.Mesh.Mesh): void
+}
+
+class GraphicRenderer {
+  -debug: boolean
+  +turnOnDebug(): void
+  +turnOffDebug(): void
+  +render(Structs.Mesh.Mesh, Graphics2D): void
+}
+
+class DebugMode {
+  #render(Structs.Mesh.Mesh, Graphics2D)
+  #visualizePolygonNeighbours(Structs.Mesh.Mesh, Graphics2D, List<Structs.Vertex>)
+  #isDebug(): boolean
+}
+
+VisualMode <|-- NormalMode: "is_a"
+VisualMode <|-- DebugMode: "is_a"
+VisualMode ..> Structs.Property: "uses"
+VisualMode ..> Structs.Vertex: "uses"
+VisualMode ..> Structs.Mesh.Mesh: "uses"
+VisualMode ..> Structs.Segment: "uses"
+VisualMode ..> Structs.Polygon: "uses"
+NormalMode ..> Structs.Mesh.Mesh: "uses"
+DebugMode ..> Structs.Mesh.Mesh: "uses"
+DebugMode ..> Structs.Vertex: "uses"
+GraphicRenderer ..> Structs.Mesh.Mesh: "uses"
+GraphicRenderer ..> VisualMode: "uses"
+MeshDump ..> Structs.Mesh.Mesh: "uses"
+Main ..> GraphicRenderer: "uses"
+Main ..> Structs.Mesh.Mesh: "uses"
+Main ..> SVGCanvas: "uses"
+Main ..> MeshDump: "uses"
+
+@enduml

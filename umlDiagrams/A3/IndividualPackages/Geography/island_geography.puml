@@ -1,0 +1,117 @@
+@startuml
+
+package Geography {
+
+  class Border {
+    ~segment: Segment
+    ~v1: VertexDecorator
+    ~v2: VertexDecorator
+    ~water: BodyOfWater
+
+    +getSegment(): Segment
+    +{static} newBuilder(): BorderBuilder
+    #Border(Segment, VertexDecorator, VertexDecorator)
+  }
+  class BorderBuilder {
+    -segment: Segment
+    -v1: VertexDecorator
+    -v2: VertexDecorator
+    +addV1(VertexDecorator): BorderBuilder
+    +addV2(VertexDecorator): BorderBuilder
+    +addSegment(Segment): BorderBuilder
+    +build(): Border
+  }
+  class Tile {
+    ~polygon: Polygon
+    ~borders: List<Border>
+    ~centroid: VertexDecorator
+    ~JTSPolygon: JTS.Polygon
+    ~water: BodyOfWater
+    ~absorption: Double
+    ~soilProfile: SoilProfile
+    ~biome: Biome
+    ~isWaterCenter: boolean
+    #Tile(Polygon, List<Border>, VertexDecorator)
+  }
+  class TileBuilder {
+    -borders: List<Border>
+    -centroid: VertexDecorator
+    -polygon: Polygon
+    +addBorders(List<Border>): TileBuilder
+    +addPolygon(Polygon): TileBuilder
+    +addCentroid(VertexDecorator): TileBuilder
+    +build(): Tile
+  }
+  class VertexDecorator {
+    ~vertex: Vertex
+    ~isSpring: Boolean
+    ~altitude: Double
+    #VertexDecorator(Vertex)
+    +getX(): double
+    +getY(): double
+  }
+  class VertexDecoratorBuilder {
+    -vertex: Vertex
+    +addVertex(Vertex): VertexDecoratorBuilder
+    +build(): VertexDecorator
+  }
+
+}
+
+package MeshADT {
+
+  class Geometries.Segment
+  class Geometries.Polygon
+  class Geometries.Vertex
+
+}
+
+package Geography {
+
+  class Border
+  class Tile
+  class VertexDecorator
+
+}
+
+package Features {
+
+  class Water.BodyOfWater
+  class Soil.SoilProfile
+  class Biomes.Biome
+
+}
+
+package JTS {
+
+  class Polygon
+
+}
+
+Tile *-up- MeshADT.Geometries.Polygon
+Tile *-down- Border
+Tile *-right- JTS.Polygon
+Tile *-up- Features.Biomes
+Tile *-up- Features.Soil
+Tile *-up- Features.Water
+Tile -left-> TileBuilder
+
+TileBuilder *-down- Border
+TileBuilder *-down- VertexDecorator
+TileBuilder *-up- MeshADT.Geometries.Polygon
+
+Border *-up- MeshADT.Geometries.Segment
+Border *-down- Geography.VertexDecorator
+Border *-up- Features.Water.BodyOfWater
+Border -left-> BorderBuilder
+
+BorderBuilder *-up- MeshADT.Geometries.Segment
+BorderBuilder *-down- Geography.VertexDecorator
+
+VertexDecorator *-up- MeshADT.Geometries.Vertex
+VertexDecorator -left-> VertexDecoratorBuilder
+
+VertexDecoratorBuilder *-up- MeshADT.Geometries.Vertex
+
+
+@enduml

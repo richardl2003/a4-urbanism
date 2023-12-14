@@ -1,0 +1,110 @@
+@startuml
+
+title Island: Specification
+
+package Specification {
+
+  interface Buildable {
+    ~build(): Island
+    ~create(): Buildable
+  }
+  annotation Feature
+  annotation PreFeature
+  annotation PostFeature
+  class IslandBuilder {
+    ~island: Island
+    +IslandBuilder(Island, Configuration)
+    -configure(Configuration): void
+    +create(): Buildable
+    +build(): Island
+  }
+
+  package Factories {
+
+    interface FeatureRunner {
+      ~run(Island, Configuration): void
+    }
+    class AltitudeFactory {
+      -{static}{final} bindings: Map<String, Class>
+      -{static}{final} DEFAULT: String
+      +^run(Island, Configuration): void
+    }
+    class AquiferFactory {
+      +^run(Island, Configuration): void
+    }
+    class BiomeFactory {}
+    class LakeFactory
+    class RiverFactory
+    class ShapeFactory
+    class SoilFactory
+    class SeedFactory
+    class SpecificationFactory {
+      -{static}{final} bindings: Map<Field, Class>
+      +{static} run(Field, Island, Configuration)
+    }
+    class VisualizerFactory
+
+  }
+
+}
+
+package Island {
+
+  class Island
+
+}
+
+package Configuration {
+
+  class Configuration
+
+}
+
+package Features {
+
+  interface Elevation.ElevationProfile
+  class Water.AquiferGenerator
+  class Water.LakeGenerator
+  class Biomes.DiagramProfile
+  class Shapes.Shape
+  class Soil.SoilProfile
+
+}
+
+IslandBuilder *-- Island.Island
+IslandBuilder ..> Configuration
+
+FeatureRunner ..> Island.Island
+FeatureRunner ..> Configuration
+
+AltitudeFactory ..|> FeatureRunner
+AltitudeFactory .up.> Features.Elevation.ElevationProfile
+
+AquiferFactory ..|> FeatureRunner
+AquiferFactory .up.> Features.Water.AquiferGenerator
+
+BiomeFactory ..|> FeatureRunner
+BiomeFactory .up.> Features.Biomes.DiagramProfile
+
+LakeFactory ..|> FeatureRunner
+LakeFactory .up.> Features.Water.LakeGenerator
+
+RiverFactory ..|> FeatureRunner
+RiverFactory .up.> Features.Water.RiverGenerator
+
+ShapeFactory ..|> FeatureRunner
+ShapeFactory .up.> Features.Shapes.Shape
+
+SoilFactory ..|> FeatureRunner
+SoilFactory .up.> Features.Soil.SoilProfile
+
+SeedFactory ..|> FeatureRunner
+SeedFactory .up.> Features.Seed
+
+VisualizerFactory ..|> FeatureRunner
+VisualizerFactory .up.> Visuazlier.Visualizer
+
+
+SpecificationFactory ..> FeatureRunner
+
+@enduml

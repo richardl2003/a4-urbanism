@@ -1,0 +1,75 @@
+@startuml
+
+title Pathfinder: Architecture
+
+package Graph {
+  class Graph {
+    ~nodes: Set<Node>
+    ~edges: Set<Edge>
+
+    +Graph(Set<Node>, Set<Edge>)
+    +getNodes(): Set<Node>
+    +getEdges(): Set<Edge>
+    +addNode(Node): void
+    +addEdge(Node, Node, Integer): void
+    +findpath(FindPath, Node, Node): List<Node>
+  }
+}
+
+package Elements {
+  class Node {
+    ~id: Integer
+    -distance: Integer
+    -neighbours: List<Edge>
+    +Node(Integer)
+    +getId(): Integer
+    +getDistance(): Integer
+    +setDistance(): void
+    +^compareTo(Node): int
+  }
+  class Edge {
+    -{final} weight: Integer
+    ~n1: Node
+    ~n2: Node
+    +Edge(Node, Node, Integer)
+    +getN1(): Node
+    +getN2(): Node
+    +getWeight(): Integer
+  }
+}
+
+package Algorithms {
+  class ShortestPath {
+    ~paths: Map<Node, List<Node>>
+    ~adjacentNodes: Map<Node, Map<Node, Integer>>
+    +^pathFinder(Graph, Node, Node): List<Node>
+    -SSSP_Dijkstra(Node): void
+    -setAdjacentNodes(Graph): void
+    -findAdjacentNodes(Graph, Node): void
+    -updateAdjacentDistance(Node, Integer, Node): void
+    -getTargetPaht(Node): List<Node>
+    -nodeDistanceReset(Graph): void
+  }
+  interface FindPath {
+    ~pathFinder(Graph, Node, Node): List<Node>
+  }
+}
+
+package java.lang {
+  interface Comparable
+}
+
+Elements.Node ..|> java.lang.Comparable
+Elements.Node "1" *-right- "0...N" Elements.Edge
+Elements.Edge "1" *-right- "2" Elements.Node
+Graph.Graph *-right- Algorithms.FindPath
+Graph.Graph "1" *-down- "0...N" Elements.Edge
+Graph.Graph "1" *-down- "0...N" Elements.Node
+
+Algorithms.ShortestPath .up.|> Algorithms.FindPath
+Algorithms.ShortestPath .right.> Elements.Node
+Algorithms.ShortestPath ..> Graph.Graph
+
+
+
+@enduml

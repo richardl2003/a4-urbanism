@@ -1,0 +1,7 @@
+Main.class
+ca/mcmaster/cas/se2aa4/a2/visualizer/Modes/VisualMode.class
+ca/mcmaster/cas/se2aa4/a2/visualizer/utils/SVGCanvas.class
+ca/mcmaster/cas/se2aa4/a2/visualizer/Modes/DebugMode.class
+ca/mcmaster/cas/se2aa4/a2/visualizer/GraphicRenderer.class
+ca/mcmaster/cas/se2aa4/a2/visualizer/utils/MeshDump.class
+ca/mcmaster/cas/se2aa4/a2/visualizer/Modes/NormalMode.class

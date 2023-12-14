@@ -1,0 +1,237 @@
+@startuml
+
+skin rose
+
+title Generator - Class Diagram
+
+page 5x5
+skinparam pageMargin 10
+skinparam pageExternalColor gray
+skinparam pageBorderColor black
+
+namespace EnhancedSets {
+  interface GeometrySet {
+    +add(E): Integer
+    +contains(E): boolean
+    +get(Integer): E
+  }
+
+  class PolygonSet {
+    +^add(Polygon): Integer
+    +^contains(Polygon): boolean
+    +^get(Integer): Polygon
+  }
+
+  class SegmentSet {
+    +^add(Segment): Integer
+    +^contains(Segment): boolean
+    +^get(Integer): Segment
+  }
+
+  class VertexSet {
+    +^add(Vertex): Integer
+    +^contains(Vertex): boolean
+    +^get(Integer): Segment
+  }
+
+  interface Iterable
+
+  GeometrySet <|.. PolygonSet: "implements"
+  GeometrySet <|.. SegmentSet: "implements"
+  GeometrySet <|.. VertexSet: "implements"
+  GeometrySet -up-|> Iterable: "is_a"
+  Iterable <|.. PolygonSet: "implements"
+  Iterable <|.. SegmentSet: "implements"
+  Iterable <|.. VertexSet: "implements"
+}
+
+namespace Enums {
+  enum CommandLineOptions {
+    HELP
+    OUTPUTFILE
+    TYPEOFMESH
+    RELAXATION
+    NUMOFPOLYGONS
+  }
+  enum TypeOfMesh {
+    HEX
+    SQUARE
+    DIAMOND
+    REGULAR
+    IRREGULAR
+  }
+}
+
+namespace Geometries {
+  class Centroid {
+    +Centroid(Double, Double)
+  }
+
+  class Coordinate {
+    x: Integer
+    y: Integer
+    +{static} precision: double
+    +Coordinate(Double, Double)
+    +Coordinate(Integer, Integer)
+    +^equals(Object): boolean
+    +^hashCode(): int
+  }
+
+  class Polygon {
+    -segmentList: List<Segment>
+    -polygon: Structs.Polygon
+    -color: Color
+    -centroid: Centroid
+    +Polygon(List<Segment>, Color, Float)
+    +generatePolygon(): void
+    +addPolygonNeighbourSet(Set<Polygon>)
+    +^equals(Object): boolean
+    +^hashCode(): int
+  }
+
+  class Segment {
+    -segment: Structs.Segment
+    -v1: Vertex
+    -v2: Vertex
+    -propertyHandler: PropertyHandler
+    +getV1(): Vertex
+    +getV2(): Vertex
+    +generateSegment(): void
+    +^equals(Object): boolean
+    +^hashCode(): int
+  }
+
+  class Vertex {
+    -vertex: Structs.Vertex
+    -color: Color
+    -coordinate: Coordinate
+    -propertyHandler: PropertyHandler
+    +isCentroid(): boolean
+    +Vertex(Double, Double)
+    +getX(): Double
+    +getY(): Double
+    +getColor(): Color
+    +getId(): Integer
+    -setVertex(Double, Double, Color, Float): void
+    +^equals(Object): boolean
+    +^hashCode(): int
+  }
+
+  class PropertyHandler{
+    generateColors(): Color
+    averageColor(Color, Color): Color
+    setColorProperty(Color): Structs.Property
+    setThicknessProperty(Float): Structs.Property
+    setCentroidProperty(Boolean): Structs.Property
+    averageColor(List<Segment>): Color
+  }
+
+  Vertex <|.. Centroid: "is_a"
+  Vertex ..> PropertyHandler: "uses"
+  Polygon ..> PropertyHandler: "uses"
+  Polygon "0..1" o-- "*" Segment: "has_a"
+  Polygon "1" -up- "|segmentsList|"Polygon: "Neighbours"
+  Polygon *-- .Structs.Polygon: "has_a"
+  Segment *-- .Structs.Segment: "has_a"
+  Segment "0..1" o-- "2" Vertex: "has_a"
+  Segment ..> PropertyHandler: "uses"
+  Vertex *-- .Structs.Vertex: "has_a"
+  Vertex *.. Coordinate: "has_a"
+
+}
+
+namespace Helpers {
+  class GeneratorToStructsConverter
+
+  class JTSToGeneratorConverter
+
+  class NeighbourCalculator
+
+  class VoronoiDiagram
+
+  NeighbourCalculator ..> Geometries.Polygon: "uses"
+  JTSToGeneratorConverter ..> Geometries.Segment: "uses"
+  JTSToGeneratorConverter ..> Geometries.Polygon: "uses"
+  JTSToGeneratorConverter "1" o-- "1" EnhancedSets.PolygonSet: "has_a"
+  JTSToGeneratorConverter "1" o-- "1" EnhancedSets.SegmentSet: "has_a"
+  JTSToGeneratorConverter "1" o-- "1" EnhancedSets.VertexSet: "has_a"
+  GeneratorToStructsConverter ..> Geometries.Polygon: "uses"
+  GeneratorToStructsConverter ..> Geometries.Segment: "uses"
+  GeneratorToStructsConverter ..> Geometries.Vertex: "uses"
+}
+
+namespace Meshs {
+  abstract class Mesh.Mesh {
+    #width: int
+    #height: int
+    -precision: double
+    mesh: Structs.Mesh.Mesh
+    -centroids: List<Centroid>
+    +generate(): Structs.Mesh.Mesh
+    #generateDiagram(List<Coordinate>): void
+    +getCentroids(): List<Centroid>
+    #{abstract} generatePoints(): List<Coordinate>
+  }
+
+  abstract class RegularMesh{
+    #{abstract} generatePoints(): List<Coordinate>
+  }
+
+  interface Mesh.GeometryDiagram {
+    +generate(): Structs.Mesh.Mesh
+    +getCentroids(): List<Centroid>
+  }
+
+  class SquareRegularMesh {
+    -square_size: int
+    #generatePoints(): List<Coordinate>
+  }
+
+  class HexRegularMesh {
+    #generatePoints(): List<Coordinate>
+  }
+
+  class DiamondRegularMesh {
+    #generatePoints(): List<Coordinate>
+  }
+
+  class IrregularMesh {
+    -lloydRelaxationNumber: Integer
+    -numOfPolygons: Integer
+    +^generate(): Structs.Mesh.Mesh
+    +setRelaxation(Integer): IrregularMesh
+    +setNumOfPolygons(Integer): IrregularMesh
+    -centroidToCoordinate(List<Centroid>): List<Coordinate>
+    #generatePoints(): List<Coordinate>
+  }
+
+  class HoneyCombRegularMesh {
+    #generatePoints(): List<Coordinate>
+  }
+
+  class MeshFactory {
+    +create(TypeOfMesh): Mesh.Mesh
+  }
+
+  Mesh.GeometryDiagram <|.down. Mesh.Mesh: "implements"
+  Mesh.Mesh <|-- RegularMesh: "is_a"
+  Mesh.Mesh <|-- IrregularMesh: "is_a"
+  RegularMesh <|-- SquareRegularMesh: "is_a"
+  RegularMesh <|-- HexRegularMesh: "is_a"
+  RegularMesh <|-- DiamondRegularMesh: "is_a"
+  RegularMesh <|-- HoneyCombRegularMesh: "is_a"
+}
+
+DotGen ..> Enums.CommandLineOptions: "uses"
+Meshs.Mesh.Mesh ..> Helpers.JTSToGeneratorConverter: "uses"
+Meshs.Mesh.Mesh ..> Helpers.NeighbourCalculator: "uses"
+Meshs.Mesh.Mesh ..> Helpers.VoronoiDiagram: "uses"
+Meshs.Mesh.Mesh ..> Structs.Polygon: "uses"
+Meshs.Mesh.Mesh ..> Structs.Segment: "uses"
+Meshs.Mesh.Mesh ..> Structs.Vertex: "uses"
+Meshs.Mesh.Mesh ..> Geometries.Centroid: "uses"
+Meshs.MeshFactory ..> Enums.TypeOfMesh: "uses"
+
+
+
+@enduml
